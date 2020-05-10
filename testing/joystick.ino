@@ -34,11 +34,11 @@ void setup() {
 }
 
 void loop() {
+	/* -------------------------- */
+	/* Buttons */
+	/* -------------------------- */
 	int buttonOneValue = digitalRead(buttonOne);
 	int buttonTwoValue = digitalRead(buttonTwo);
-	int joystickButtonValue = digitalRead(joystickButton);
-	int joystickXValue = analogRead(joystickX) - 512;
-	int joystickYValue = analogRead(joystickY) - 512;
 
 	if (buttonOneValue == PRESSED) {
 		Serial.println("One");
@@ -50,13 +50,20 @@ void loop() {
 		digitalWrite(LED_BUILTIN, HIGH);
 	};
 
+
+	/* -------------------------- */
+	/* Joysticks */
+	/* -------------------------- */
+	int joystickButtonValue = digitalRead(joystickButton);
+	int joystickXValue = analogRead(joystickX) - 512;
+	int joystickYValue = analogRead(joystickY) - 512;
+	bool xActive = active(tolerance, joystickXValue);
+	bool yActive = active(tolerance, joystickYValue);
+
 	if (joystickButtonValue == PRESSED) {
 		digitalWrite(LED_BUILTIN, HIGH);
 		Serial.println("Joystick");
 	};
-
-	bool xActive = active(tolerance, joystickXValue);
-	bool yActive = active(tolerance, joystickYValue);
 	if(xActive || yActive) {
 		Serial.print("X: ");
 		Serial.print(joystickXValue);
