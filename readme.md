@@ -37,7 +37,7 @@ Save / Exit
 # Update the cli config
 arduino-cli core update-index
 
-# Install the correct adafruit package
+# Install the correct adafruit package (run EITHER command)
 arduino-cli core install adafruit:avr # For 32u4 bluefruit
 arduino-cli core install adafruit:samd # For m0 feather boards
 
@@ -45,12 +45,12 @@ arduino-cli core install adafruit:samd # For m0 feather boards
 arduino-cli board list
 
 # Confirm package is installed (note the "FQBN")
-arduino-cli board listall mkr
+arduino-cli board listall adafruit
 
-# Compile
+# Compile (this command will look different for a different board. Doublecheck the FQBN!)
 arduino-cli compile --fqbn adafruit:samd:adafruit_feather_m0 testing # Command structure: arduino-cli compile --fqbn #{FQBN} #{PROJECT_FILE_OR_FOLDER}
 
-# Upload
+# Upload (this command will look different for a different board. Doublecheck the FQBN and PORT!)
 arduino-cli upload -p /dev/cu.usbmodem101 --fqbn adafruit:samd:adafruit_feather_m0 testing # Command Structure: arduino-cli upload -p #{PORT} --fqbn #{FQBN} #{PROJECT_FILE_OR_FOLDER}
 
 # Project should now be running
