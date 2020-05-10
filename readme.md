@@ -9,6 +9,58 @@ I've been meaning to build a set of remote controls for navigation for a while n
   - Scrolling + PS2 style joypad control = inertia control, so we can scroll faster / slower, making it more natural
 - See if we can get Gurumaps to follow suit and implement scrolling features
 
+## Setup
+Setup the Arduino-CLI with the following commands. Device needs to be plugged-in.
+```sh
+# Update Homebrew
+brew update
+
+# Install the Arduino-Cli
+brew install arduino-cli
+
+# Init an empty Config
+arduino-cli config init
+
+# Add the external board URL
+'
+In the Yaml file, Replace:
+
+  additional_urls: []
+
+With:
+
+  additional_urls: 
+    - https://raw.githubusercontent.com/rolandpeelen/cntroller/master/package_adafruit_index.json
+
+Save / Exit
+'
+# Update the cli config
+arduino-cli core update-index
+
+# Install the correct adafruit package
+arduino-cli core install adafruit:avr # For 32u4 bluefruit
+arduino-cli core install adafruit:samd # For m0 feather boards
+
+# Confirm USB (note the "Port")
+arduino-cli board list
+
+# Confirm package is installed (note the "FQBN")
+arduino-cli board listall mkr
+
+# Compile
+arduino-cli compile --fqbn adafruit:samd:adafruit_feather_m0 testing # Command structure: arduino-cli compile --fqbn #{FQBN} #{PROJECT_FILE_OR_FOLDER}
+
+# Upload
+arduino-cli upload -p /dev/cu.usbmodem101 --fqbn adafruit:samd:adafruit_feather_m0 testing # Command Structure: arduino-cli upload -p #{PORT} --fqbn #{FQBN} #{PROJECT_FILE_OR_FOLDER}
+
+# Project should now be running
+# Connect to USB Serial with screen
+screen /dev/cu.usbmodem101 115200 # Command Structure: screen #{PORT} #{BAUDRATE}
+
+# To disconnect, either press reset button on Arduino, or "CTRL+A" followed by typing ":quit"
+```
+
+# From Chris
 ## RallyBlitz Remote Boards DIY Instructions, v1.2
 
 This code tested on an Bluefruit Feather 32u4. Should also work on Feather M0.
