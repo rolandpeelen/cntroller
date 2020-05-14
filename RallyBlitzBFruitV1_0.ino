@@ -89,8 +89,8 @@ hid_keyboard_report_t keyReport = { 0, 0, { 0 } };
 hid_keyboard_report_t previousReport = { 0, 0, { 1 } };
 
 /* GPIO corresponding to HID keycode */
-int inputPins[6] = { 5, 6, 9, 10, 11, 12 };
-char const *commands[6] = { "VOLUME+", "VOLUME-", "MEDIANEXT", "MEDIAPREVIOUS", "VOLUME+", "VOLUME-" };
+int inputPins[4] = { 5, 6, 9, 10  };
+char const *commands[4] = { "VOLUME+", "VOLUME-", "MEDIANEXT", "MEDIAPREVIOUS"  };
 
 /**************************************************************************/
 /*  @brief  Sets up the HW an the BLE module (this function is called automatically on startup) */
