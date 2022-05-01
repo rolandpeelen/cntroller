@@ -57,7 +57,7 @@
   central device won't be able to reconnect.
   MINIMUM_FIRMWARE_VERSION  Minimum firmware version to have some new features
   -----------------------------------------------------------------------*/
-#define FACTORYRESET_ENABLE         1
+#define FACTORYRESET_ENABLE         0
 /*=========================================================================*/
 
 /* ...hardware SPI, using SCK/MOSI/MISO hardware SPI pins and then user selected CS/IRQ/RST */
@@ -89,8 +89,8 @@ hid_keyboard_report_t keyReport = { 0, 0, { 0 } };
 hid_keyboard_report_t previousReport = { 0, 0, { 1 } };
 
 /* GPIO corresponding to HID keycode */
-int inputPins[4] = { 5, 6, 9, 10  };
-char const *commands[4] = { "VOLUME+", "VOLUME-", "MEDIANEXT", "MEDIAPREVIOUS"  };
+int inputPins[4] = { 5, 6 };
+char const *commands[4] = { "VOLUME+", "VOLUME-", "MEDIANEXT"  };
 
 /**************************************************************************/
 /*  @brief  Sets up the HW an the BLE module (this function is called automatically on startup) */
@@ -100,7 +100,7 @@ void setup(void)
 	/* while (!Serial); */
 	delay(500);
 
-	Serial.begin(115200);
+	Serial.begin(9600);
 	Serial.println(F("RallyBlitz Button Control"));
 	Serial.println(F("---------------------------------------"));
 
@@ -148,14 +148,14 @@ void setup(void)
 	Serial.println();
 
 	/* Set device name */
-	ble.println("AT+GAPDEVNAME=RallyBlitz Control");
+	ble.println("AT+GAPDEVNAME=Rally Controller");
 	ble.println("ATZ");
 
 	/* Set up input Pins */
-	for(int i=0; i< 6; i++)
-	{
-		pinMode(inputPins[i], INPUT_PULLUP);
-	}
+		pinMode(5, INPUT_PULLUP);
+		pinMode(6, INPUT_PULLUP);
+		pinMode(9, INPUT_PULLUP);
+		pinMode(10, INPUT_PULLUP);
 }
 
 /**************************************************************************/
@@ -166,30 +166,27 @@ void loop(void)
 	/* scan all GPIO listed in definition */
 	if ( ble.isConnected() )
 	{
-		int activePinIndex = 0;
-		for(int i=0; i<6; i++)
-		{
-			/* GPIO / Button is a press on ground signal */
-			if ( digitalRead(inputPins[i]) == LOW )
-				/*
-				  {
-				    keyReport.keycode[i] = inputKeycodes[i];
-				   activePinIndex = i;
-				   }else
-				    {
-				     keyReport.keycode[i] = 0;
-				   }
-				*/
-
-			{
-				/* Send keyboard report through BLE */
+          // 5 && 6 is right hand side button
+			if ( digitalRead(5) == LOW && digitalRead(6) == LOW ) {
+        ble.print("AT+BleHidControlKey=");
+        ble.println("PLAYPAUSE");
+			}else if ( digitalRead(6) == LOW ) {
 				ble.print("AT+BleHidControlKey=");
-				ble.println(commands[i]);
-
+				ble.println("VOLUME-");
+			}else if ( digitalRead(5) == LOW ) {
+				ble.print("AT+BleHidControlKey=");
+				ble.println("VOLUME+");
 			}
-		}
+
+      if(digitalRead(10) == LOW){
+				ble.print("AT+BleHidControlKey=");
+				ble.println("MEDIAPREVIOUS");
+      }else if(digitalRead(9) == LOW){
+				ble.print("AT+BleHidControlKey=");
+				ble.println("MEDIANEXT");
+      }
 	}
-	/* scaning period is 175 ms */
-	delay(175);
+
+	delay(75);
 }
 
